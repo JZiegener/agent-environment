@@ -28,10 +28,11 @@ rand() {
 
 # Generate secrets
 SALT=$(rand base64 32)
-ENCRYPTION_KEY=$(rand hex 32)  # 32 bytes = 64 hex chars
+ENCRYPTION_KEY=$(rand hex 32)  # 32 bytes = 64 hex chars  (generated with openssl rand -hex 32)
 NEXTAUTH_SECRET=$(rand base64 32)
 REDIS_AUTH=$(rand base64 32)
-POSTGRES_PASSWORD=$(rand base64 32)
+POSTGRES_PASSWORD=$(openssl rand -base64 12 | tr -dc A-Za-z0-9)
+
 MINIO_ROOT_PASSWORD=$(rand base64 32)
 CLICKHOUSE_PASSWORD=$(rand base64 32)
 S3_EVENT_SECRET=$(rand base64 32)
@@ -49,12 +50,13 @@ replace SALT "$SALT"
 replace ENCRYPTION_KEY "$ENCRYPTION_KEY"
 replace NEXTAUTH_SECRET "$NEXTAUTH_SECRET"
 replace REDIS_AUTH "$REDIS_AUTH"
-replace DATABASE_URL "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres"
 replace MINIO_ROOT_PASSWORD "$MINIO_ROOT_PASSWORD"
 replace CLICKHOUSE_PASSWORD "$CLICKHOUSE_PASSWORD"
 replace LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY "$S3_EVENT_SECRET"
 replace LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY "$S3_MEDIA_SECRET"
-replace LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY "$S3_BATCH_SECRET"
+replace DIRECT_URL "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres"
+replace DATABASE_URL "postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres"
+
 
 chmod +x "$0"
 echo "Generated .env file with secrets successfully."
