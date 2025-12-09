@@ -59,13 +59,10 @@ replace LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY "$S3_MEDIA_SECRET"
 replace POSTGRES_PASSWORD "$POSTGRES_PASSWORD"
 
 # Generate RSA key pair for Langfuse project
-openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048 \
-  && openssl rsa -pubout -in private_key.pem -out public_key.pem
-PROJECT_PUBLIC_KEY=$(cat public_key.pem | tr -d '\n')
-PROJECT_SECRET_KEY=$(cat private_key.pem | tr -d '\n')
+PROJECT_PUBLIC_KEY=$(openssl rand -base64 32)
+PROJECT_SECRET_KEY=$(openssl rand -base64 32)
 replace LANGFUSE_INIT_PROJECT_PUBLIC_KEY "$PROJECT_PUBLIC_KEY"
 replace LANGFUSE_INIT_PROJECT_SECRET_KEY "$PROJECT_SECRET_KEY"
-rm -f private_key.pem public_key.pem
 
 replace LANGFUSE_INIT_USER_PASSWORD "$LANGFUSE_INIT_USER_PASSWORD"
 
